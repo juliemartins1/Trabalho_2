@@ -1,1001 +1,194 @@
-
-        // Variáveis para armazenar os elementos da página
-        let headerElements = [];
-        let menuItems = [];
-        let galleryItems = [];
-        let formFields = [];
-        
-        // Contador para IDs únicos
-        let headerElementCounter = 0;
-        let menuItemCounter = 0;
-        let galleryItemCounter = 0;
-        let formFieldCounter = 0;
-        
-        // Função para alternar entre guias
-        function switchTab(event, panelId) {
-            // Remover classe ativa de todas as guias
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Páginas HTML</title>
+    <link rel="icon" href="data:,">
+    <!-- Importação do Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Importação do arquivo CSS personalizado -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <h1>Editor de Páginas HTML</h1>
+    
+    <div class="container">
+        <div class="editor-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(event, 'header-panel')">Cabeçalho</div>
+                <div class="tab" onclick="switchTab(event, 'menu-panel')">Menu</div>
+                <div class="tab" onclick="switchTab(event, 'gallery-panel')">Galeria</div>
+                <div class="tab" onclick="switchTab(event, 'form-panel')">Formulário</div>
+                <div class="tab" onclick="switchTab(event, 'footer-panel')">Rodapé</div>
+                <div class="tab" onclick="switchTab(event, 'general-panel')">Geral</div>
+            </div>
             
-            // Adicionar classe ativa à guia clicada
-            event.currentTarget.classList.add('active');
-            
-            // Esconder todos os painéis
-            const panels = document.querySelectorAll('.panel');
-            panels.forEach(panel => panel.classList.remove('active'));
-            
-            // Mostrar o painel correspondente
-            document.getElementById(panelId).classList.add('active');
-        }
-        
-        // Função para inicializar o editor
-        function initEditor() {
-            // Adicionar elementos iniciais
-            addHeaderElement();
-            addMenuItem();
-            addMenuItem();
-            addGalleryItem();
-            addGalleryItem();
-            addGalleryItem();
-            addFormField();
-            addFormField();
-            
-            // Inicializar a visualização
-            updatePreview();
-        }
-        
-        // Funções para manipular o cabeçalho
-        function addHeaderElement() {
-            if (headerElements.length >= 3) {
-                alert('Você já atingiu o limite de 3 elementos no cabeçalho.');
-                return;
-            }
-            
-            const id = 'header-element-' + headerElementCounter++;
-            const element = {
-                id: id,
-                type: 'text',
-                content: 'Título do Cabeçalho',
-                backgroundColor: '#ffffff',
-                textColor: '#333333',
-                fontSize: 18,
-                width: 100,
-                height: 50
-            };
-            
-            headerElements.push(element);
-            renderHeaderElements();
-            updatePreview();
-        }
-        
-        function renderHeaderElements() {
-            const container = document.getElementById('header-elements');
-            container.innerHTML = '';
-            
-            headerElements.forEach((element, index) => {
-                const elementContainer = document.createElement('div');
-                elementContainer.className = 'header-element';
-                
-                const elementHeader = document.createElement('h3');
-                elementHeader.textContent = 'Elemento ' + (index + 1);
-                
-                const typeLabel = document.createElement('label');
-                typeLabel.textContent = 'Tipo:';
-                
-                const typeSelect = document.createElement('select');
-                typeSelect.innerHTML = `
-                    <option value="text" ${element.type === 'text' ? 'selected' : ''}>Texto</option>
-                    <option value="image" ${element.type === 'image' ? 'selected' : ''}>Imagem</option>
-                `;
-                typeSelect.onchange = function() {
-                    element.type = this.value;
-                    renderHeaderElements();
-                    updatePreview();
-                };
-                
-                elementContainer.appendChild(elementHeader);
-                elementContainer.appendChild(typeLabel);
-                elementContainer.appendChild(typeSelect);
-                
-                if (element.type === 'text') {
-                    const contentLabel = document.createElement('label');
-                    contentLabel.textContent = 'Conteúdo:';
-                    
-                    const contentInput = document.createElement('input');
-                    contentInput.type = 'text';
-                    contentInput.value = element.content;
-                    contentInput.onchange = function() {
-                        element.content = this.value;
-                        updatePreview();
-                    };
-                    
-                    const bgColorLabel = document.createElement('label');
-                    bgColorLabel.textContent = 'Cor de Fundo:';
-                    
-                    const bgColorContainer = document.createElement('div');
-                    bgColorContainer.className = 'color-picker-container';
-                    
-                    const bgColorInput = document.createElement('input');
-                    bgColorInput.type = 'color';
-                    bgColorInput.value = element.backgroundColor;
-                    bgColorInput.onchange = function() {
-                        element.backgroundColor = this.value;
-                        bgColorValue.textContent = this.value;
-                        updatePreview();
-                    };
-                    
-                    const bgColorValue = document.createElement('span');
-                    bgColorValue.textContent = element.backgroundColor;
-                    
-                    bgColorContainer.appendChild(bgColorInput);
-                    bgColorContainer.appendChild(bgColorValue);
-                    
-                    const textColorLabel = document.createElement('label');
-                    textColorLabel.textContent = 'Cor do Texto:';
-                    
-                    const textColorContainer = document.createElement('div');
-                    textColorContainer.className = 'color-picker-container';
-                    
-                    const textColorInput = document.createElement('input');
-                    textColorInput.type = 'color';
-                    textColorInput.value = element.textColor;
-                    textColorInput.onchange = function() {
-                        element.textColor = this.value;
-                        textColorValue.textContent = this.value;
-                        updatePreview();
-                    };
-                    
-                    const textColorValue = document.createElement('span');
-                    textColorValue.textContent = element.textColor;
-                    
-                    textColorContainer.appendChild(textColorInput);
-                    textColorContainer.appendChild(textColorValue);
-                    
-                    const fontSizeLabel = document.createElement('label');
-                    fontSizeLabel.textContent = 'Tamanho da Fonte:';
-                    
-                    const fontSizeInput = document.createElement('input');
-                    fontSizeInput.type = 'number';
-                    fontSizeInput.min = 10;
-                    fontSizeInput.max = 48;
-                    fontSizeInput.value = element.fontSize;
-                    fontSizeInput.onchange = function() {
-                        element.fontSize = this.value;
-                        updatePreview();
-                    };
-                    
-                    elementContainer.appendChild(contentLabel);
-                    elementContainer.appendChild(contentInput);
-                    elementContainer.appendChild(bgColorLabel);
-                    elementContainer.appendChild(bgColorContainer);
-                    elementContainer.appendChild(textColorLabel);
-                    elementContainer.appendChild(textColorContainer);
-                    elementContainer.appendChild(fontSizeLabel);
-                    elementContainer.appendChild(fontSizeInput);
-                } else if (element.type === 'image') {
-                    const uploadLabel = document.createElement('label');
-                    uploadLabel.textContent = 'Carregar Imagem:';
-                    
-                    const uploadInput = document.createElement('input');
-                    uploadInput.type = 'file';
-                    uploadInput.accept = 'image/*';
-                    uploadInput.onchange = function() {
-                        handleImageUpload(this, element);
-                    };
-                    
-                    const imagePreview = document.createElement('div');
-                    imagePreview.className = 'image-placeholder';
-                    imagePreview.textContent = 'Imagem do Cabeçalho';
-                    
-                    if (element.imageData) {
-                        const img = document.createElement('img');
-                        img.src = element.imageData;
-                        img.style.maxWidth = '100%';
-                        img.style.maxHeight = '100px';
-                        imagePreview.innerHTML = '';
-                        imagePreview.appendChild(img);
-                    }
-                    
-                    const sizeLabel = document.createElement('label');
-                    sizeLabel.textContent = 'Tamanho da Imagem:';
-                    
-                    const sizeContainer = document.createElement('div');
-                    sizeContainer.className = 'flex-container';
-                    
-                    const widthDiv = document.createElement('div');
-                    const widthLabel = document.createElement('label');
-                    widthLabel.textContent = 'Largura:';
-                    
-                    const widthInput = document.createElement('input');
-                    widthInput.type = 'number';
-                    widthInput.min = 50;
-                    widthInput.max = 500;
-                    widthInput.value = element.width;
-                    widthInput.onchange = function() {
-                        element.width = this.value;
-                        updatePreview();
-                    };
-                    
-                    widthDiv.appendChild(widthLabel);
-                    widthDiv.appendChild(widthInput);
-                    
-                    const heightDiv = document.createElement('div');
-                    const heightLabel = document.createElement('label');
-                    heightLabel.textContent = 'Altura:';
-                    
-                    const heightInput = document.createElement('input');
-                    heightInput.type = 'number';
-                    heightInput.min = 50;
-                    heightInput.max = 500;
-                    heightInput.value = element.height;
-                    heightInput.onchange = function() {
-                        element.height = this.value;
-                        updatePreview();
-                    };
-                    
-                    heightDiv.appendChild(heightLabel);
-                    heightDiv.appendChild(heightInput);
-                    
-                    sizeContainer.appendChild(widthDiv);
-                    sizeContainer.appendChild(heightDiv);
-                    
-                    elementContainer.appendChild(uploadLabel);
-                    elementContainer.appendChild(uploadInput);
-                    elementContainer.appendChild(imagePreview);
-                    elementContainer.appendChild(sizeLabel);
-                    elementContainer.appendChild(sizeContainer);
-                }
-                
-                const removeButton = document.createElement('button');
-                removeButton.className = 'remove-btn';
-                removeButton.textContent = 'Remover';
-                removeButton.onclick = function() {
-                    removeHeaderElement(element.id);
-                };
-                
-                elementContainer.appendChild(removeButton);
-                container.appendChild(elementContainer);
-            });
-        }
-        
-        function removeHeaderElement(id) {
-            headerElements = headerElements.filter(element => element.id !== id);
-            renderHeaderElements();
-            updatePreview();
-        }
-        
-        function handleImageUpload(input, element) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    element.imageData = e.target.result;
-                    renderHeaderElements();
-                    updatePreview();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        function updateHeaderStyle() {
-            const backgroundColor = document.getElementById('headerBgColor').value;
-            document.getElementById('headerBgColorValue').textContent = backgroundColor;
-            updatePreview();
-        }
-        
-        // Funções para manipular o menu
-        function addMenuItem() {
-            const id = 'menu-item-' + menuItemCounter++;
-            const item = {
-                id: id,
-                text: 'Item ' + menuItems.length,
-                link: '#'
-            };
-            
-            menuItems.push(item);
-            renderMenuItems();
-            updatePreview();
-        }
-        
-        function renderMenuItems() {
-            const container = document.getElementById('menu-items');
-            container.innerHTML = '';
-            
-            menuItems.forEach((item, index) => {
-                const itemContainer = document.createElement('div');
-                itemContainer.className = 'menu-item';
-                
-                const itemHeader = document.createElement('h3');
-                itemHeader.textContent = 'Item ' + (index + 1);
-                
-                const textLabel = document.createElement('label');
-                textLabel.textContent = 'Texto:';
-                
-                const textInput = document.createElement('input');
-                textInput.type = 'text';
-                textInput.value = item.text;
-                textInput.onchange = function() {
-                    item.text = this.value;
-                    updatePreview();
-                };
-                
-                const linkLabel = document.createElement('label');
-                linkLabel.textContent = 'Link:';
-                
-                const linkInput = document.createElement('input');
-                linkInput.type = 'text';
-                linkInput.value = item.link;
-                linkInput.onchange = function() {
-                    item.link = this.value;
-                    updatePreview();
-                };
-                
-                const removeButton = document.createElement('button');
-                removeButton.className = 'remove-btn';
-                removeButton.textContent = 'Remover';
-                removeButton.onclick = function() {
-                    removeMenuItem(item.id);
-                };
-                
-                itemContainer.appendChild(itemHeader);
-                itemContainer.appendChild(textLabel);
-                itemContainer.appendChild(textInput);
-                itemContainer.appendChild(linkLabel);
-                itemContainer.appendChild(linkInput);
-                itemContainer.appendChild(removeButton);
-                container.appendChild(itemContainer);
-            });
-        }
-        
-        function removeMenuItem(id) {
-            menuItems = menuItems.filter(item => item.id !== id);
-            renderMenuItems();
-            updatePreview();
-        }
-        
-        function handleMenuLogoUpload() {
-            const input = document.getElementById('menuLogo');
-            const file = input.files[0];
-            
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('menuLogoPreview').innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '100%';
-                    img.style.maxHeight = '100px';
-                    document.getElementById('menuLogoPreview').appendChild(img);
-                    
-                    // Armazenar a imagem
-                    localStorage.setItem('menuLogo', e.target.result);
-                    updatePreview();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        function updateMenuStyle() {
-            const backgroundColor = document.getElementById('menuBgColor').value;
-            const textColor = document.getElementById('menuTextColor').value;
-            const itemBgColor = document.getElementById('menuItemBgColor').value;
-            
-            document.getElementById('menuBgColorValue').textContent = backgroundColor;
-            document.getElementById('menuTextColorValue').textContent = textColor;
-            document.getElementById('menuItemBgColorValue').textContent = itemBgColor;
-            
-            updatePreview();
-        }
-        
-        // Funções para manipular a galeria
-        function addGalleryItem() {
-            const id = 'gallery-item-' + galleryItemCounter++;
-            const item = {
-                id: id,
-                title: 'Produto ' + (galleryItems.length + 1),
-                description: 'Descrição do produto ' + (galleryItems.length + 1),
-                backgroundColor: '#ffffff',
-                imageData: null
-            };
-            
-            galleryItems.push(item);
-            renderGalleryItems();
-            updatePreview();
-        }
-        
-        function renderGalleryItems() {
-            const container = document.getElementById('gallery-items');
-            container.innerHTML = '';
-            
-            galleryItems.forEach((item, index) => {
-                const itemContainer = document.createElement('div');
-                itemContainer.className = 'gallery-item';
-                
-                const itemHeader = document.createElement('h3');
-                itemHeader.textContent = 'Card ' + (index + 1);
-                
-                const titleLabel = document.createElement('label');
-                titleLabel.textContent = 'Título:';
-                
-                const titleInput = document.createElement('input');
-                titleInput.type = 'text';
-                titleInput.value = item.title;
-                titleInput.onchange = function() {
-                    item.title = this.value;
-                    updatePreview();
-                };
-                
-                const descLabel = document.createElement('label');
-                descLabel.textContent = 'Descrição:';
-                
-                const descInput = document.createElement('textarea');
-                descInput.rows = 3;
-                descInput.value = item.description;
-                descInput.onchange = function() {
-                    item.description = this.value;
-                    updatePreview();
-                };
-                
-                const uploadLabel = document.createElement('label');
-                uploadLabel.textContent = 'Carregar Imagem:';
-                
-                const uploadInput = document.createElement('input');
-                uploadInput.type = 'file';
-                uploadInput.accept = 'image/*';
-                uploadInput.onchange = function() {
-                    handleGalleryImageUpload(this, item);
-                };
-                
-                const imagePreview = document.createElement('div');
-                imagePreview.className = 'image-placeholder';
-                imagePreview.textContent = 'Imagem do Produto';
-                
-                if (item.imageData) {
-                    const img = document.createElement('img');
-                    img.src = item.imageData;
-                    img.style.maxWidth = '100%';
-                    img.style.maxHeight = '100px';
-                    imagePreview.innerHTML = '';
-                    imagePreview.appendChild(img);
-                }
-                
-                const bgColorLabel = document.createElement('label');
-                bgColorLabel.textContent = 'Cor de Fundo do Card:';
-                
-                const bgColorContainer = document.createElement('div');
-                bgColorContainer.className = 'color-picker-container';
-                
-                const bgColorInput = document.createElement('input');
-                bgColorInput.type = 'color';
-                bgColorInput.value = item.backgroundColor;
-                bgColorInput.onchange = function() {
-                    item.backgroundColor = this.value;
-                    bgColorValue.textContent = this.value;
-                    updatePreview();
-                };
-                
-                const bgColorValue = document.createElement('span');
-                bgColorValue.textContent = item.backgroundColor;
-                
-                bgColorContainer.appendChild(bgColorInput);
-                bgColorContainer.appendChild(bgColorValue);
-                
-                const removeButton = document.createElement('button');
-                removeButton.className = 'remove-btn';
-                removeButton.textContent = 'Remover';
-                removeButton.onclick = function() {
-                    removeGalleryItem(item.id);
-                };
-                
-                itemContainer.appendChild(itemHeader);
-                itemContainer.appendChild(titleLabel);
-                itemContainer.appendChild(titleInput);
-                itemContainer.appendChild(descLabel);
-                itemContainer.appendChild(descInput);
-                itemContainer.appendChild(uploadLabel);
-                itemContainer.appendChild(uploadInput);
-                itemContainer.appendChild(imagePreview);
-                itemContainer.appendChild(bgColorLabel);
-                itemContainer.appendChild(bgColorContainer);
-                itemContainer.appendChild(removeButton);
-                container.appendChild(itemContainer);
-            });
-        }
-        
-        function removeGalleryItem(id) {
-            galleryItems = galleryItems.filter(item => item.id !== id);
-            renderGalleryItems();
-            updatePreview();
-        }
-        
-        function handleGalleryImageUpload(input, item) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    item.imageData = e.target.result;
-                    renderGalleryItems();
-                    updatePreview();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        function updateGalleryStyle() {
-            const backgroundColor = document.getElementById('galleryBgColor').value;
-            document.getElementById('galleryBgColorValue').textContent = backgroundColor;
-            updatePreview();
-        }
-        
-        // Funções para manipular o formulário
-        function addFormField() {
-            const id = 'form-field-' + formFieldCounter++;
-            const field = {
-                id: id,
-                label: 'Campo ' + (formFields.length + 1),
-                type: 'text',
-                required: false
-            };
-            
-            formFields.push(field);
-            renderFormFields();
-            updatePreview();
-        }
-        
-        function renderFormFields() {
-            const container = document.getElementById('form-fields');
-            container.innerHTML = '';
-            
-            formFields.forEach((field, index) => {
-                const fieldContainer = document.createElement('div');
-                fieldContainer.className = 'form-item';
-                
-                const fieldHeader = document.createElement('h3');
-                fieldHeader.textContent = 'Campo ' + (index + 1);
-                
-                const labelLabel = document.createElement('label');
-                labelLabel.textContent = 'Label:';
-                
-                const labelInput = document.createElement('input');
-                labelInput.type = 'text';
-                labelInput.value = field.label;
-                labelInput.onchange = function() {
-                    field.label = this.value;
-                    updatePreview();
-                };
-                
-                const typeLabel = document.createElement('label');
-                typeLabel.textContent = 'Tipo:';
-                
-                const typeSelect = document.createElement('select');
-                typeSelect.innerHTML = `
-                    <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
-                    <option value="email" ${field.type === 'email' ? 'selected' : ''}>Email</option>
-                    <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Telefone</option>
-                    <option value="number" ${field.type === 'number' ? 'selected' : ''}>Número</option>
-                    <option value="date" ${field.type === 'date' ? 'selected' : ''}>Data</option>
-                    <option value="select" ${field.type === 'select' ? 'selected' : ''}>Seleção</option>
-                    <option value="radio" ${field.type === 'radio' ? 'selected' : ''}>Radio</option>
-                    <option value="textarea" ${field.type === 'textarea' ? 'selected' : ''}>Área de Texto</option>
-                `;
-                typeSelect.onchange = function() {
-                    field.type = this.value;
-                    renderFormFields();
-                    updatePreview();
-                };
-                
-                const requiredLabel = document.createElement('label');
-                requiredLabel.className = 'checkbox-label';
-                
-                const requiredInput = document.createElement('input');
-                requiredInput.type = 'checkbox';
-                requiredInput.checked = field.required;
-                requiredInput.onchange = function() {
-                    field.required = this.checked;
-                    updatePreview();
-                };
-                
-                requiredLabel.appendChild(requiredInput);
-                requiredLabel.appendChild(document.createTextNode(' Campo Obrigatório'));
-                
-                fieldContainer.appendChild(fieldHeader);
-                fieldContainer.appendChild(labelLabel);
-                fieldContainer.appendChild(labelInput);
-                fieldContainer.appendChild(typeLabel);
-                fieldContainer.appendChild(typeSelect);
-                fieldContainer.appendChild(requiredLabel);
-                
-                // Adicionar opções para tipos específicos
-                if (field.type === 'select' || field.type === 'radio') {
-                    const optionsLabel = document.createElement('label');
-                    optionsLabel.textContent = 'Opções (uma por linha):';
-                    
-                    const optionsInput = document.createElement('textarea');
-                    optionsInput.rows = 3;
-                    optionsInput.value = field.options || 'Opção 1\nOpção 2\nOpção 3';
-                    optionsInput.onchange = function() {
-                        field.options = this.value;
-                        updatePreview();
-                    };
-                    
-                    fieldContainer.appendChild(optionsLabel);
-                    fieldContainer.appendChild(optionsInput);
-                }
-                
-                const removeButton = document.createElement('button');
-                removeButton.className = 'remove-btn';
-                removeButton.textContent = 'Remover';
-                removeButton.onclick = function() {
-                    removeFormField(field.id);
-                };
-                
-                fieldContainer.appendChild(removeButton);
-                container.appendChild(fieldContainer);
-            });
-        }
-        
-        function removeFormField(id) {
-            formFields = formFields.filter(field => field.id !== id);
-            renderFormFields();
-            updatePreview();
-        }
-        
-        function updateFormStyle() {
-            const backgroundColor = document.getElementById('formBgColor').value;
-            const borderColor = document.getElementById('formBorderColor').value;
-            
-            document.getElementById('formBgColorValue').textContent = backgroundColor;
-            document.getElementById('formBorderColorValue').textContent = borderColor;
-            
-            updatePreview();
-        }
-        
-        // Funções para manipular o rodapé
-        function updateFooterStyle() {
-            const backgroundColor = document.getElementById('footerBgColor').value;
-            const textColor = document.getElementById('footerTextColor').value;
-            
-            document.getElementById('footerBgColorValue').textContent = backgroundColor;
-            document.getElementById('footerTextColorValue').textContent = textColor;
-            
-            updatePreview();
-        }
-        
-        // Funções para configurações gerais
-        function updateGeneralStyle() {
-            const backgroundColor = document.getElementById('pageBgColor').value;
-            document.getElementById('pageBgColorValue').textContent = backgroundColor;
-            updatePreview();
-        }
-        
-        // Funções para manipular a visualização
-        function updatePreview() {
-            const preview = document.getElementById('preview');
-            const headerBgColor = document.getElementById('headerBgColor').value;
-            const menuBgColor = document.getElementById('menuBgColor').value;
-            const menuTextColor = document.getElementById('menuTextColor').value;
-            const menuItemBgColor = document.getElementById('menuItemBgColor').value;
-            const galleryBgColor = document.getElementById('galleryBgColor').value;
-            const galleryColumns = document.getElementById('galleryColumns').value;
-            const formTitle = document.getElementById('formTitle').value;
-            const formBgColor = document.getElementById('formBgColor').value;
-            const formBorderColor = document.getElementById('formBorderColor').value;
-            const footerBgColor = document.getElementById('footerBgColor').value;
-            const footerTextColor = document.getElementById('footerTextColor').value;
-            const footerText = document.getElementById('footerText').value;
-            const footerFontSize = document.getElementById('footerFontSize').value;
-            const pageBgColor = document.getElementById('pageBgColor').value;
-            const pageFont = document.getElementById('pageFont').value;
-            
-            // Gerar o HTML
-            let html = `
-                <div class="generated-page" style="background-color: ${pageBgColor}; font-family: ${pageFont};">
-                    <!-- Cabeçalho -->
-                    <header style="background-color: ${headerBgColor}; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-            `;
-            
-            // Adicionar elementos do cabeçalho
-            headerElements.forEach(element => {
-                if (element.type === 'text') {
-                    html += `
-                        <div style="background-color: ${element.backgroundColor}; padding: 10px; text-align: center; width: ${element.width}px; height: ${element.height}px; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: ${element.textColor}; font-size: ${element.fontSize}px;">${element.content}</span>
-                        </div>
-                    `;
-                } else if (element.type === 'image' && element.imageData) {
-                    html += `
-                        <div style="padding: 10px; text-align: center;">
-                            <img src="${element.imageData}" style="width: ${element.width}px; height: ${element.height}px; object-fit: contain;" alt="Imagem do Cabeçalho">
-                        </div>
-                    `;
-                }
-            });
-            
-            html += `
-                    </header>
-                    
-                    <!-- Menu -->
-                    <nav style="background-color: ${menuBgColor}; color: ${menuTextColor}; padding: 10px; display: flex; align-items: center;">
-            `;
-            
-            // Adicionar logo do menu se existir
-            const menuLogo = localStorage.getItem('menuLogo');
-            const menuLogoWidth = document.getElementById('menuLogoWidth').value;
-            const menuLogoHeight = document.getElementById('menuLogoHeight').value;
-            
-            if (menuLogo) {
-                html += `
-                    <div style="margin-right: 20px;">
-                        <img src="${menuLogo}" style="width: ${menuLogoWidth}px; height: ${menuLogoHeight}px; object-fit: contain;" alt="Logo do Menu">
-                    </div>
-                `;
-            }
-            
-            html += `<ul style="list-style: none; margin: 0; padding: 0; display: flex;">`;
-            
-            // Adicionar itens do menu
-            menuItems.forEach(item => {
-                html += `
-                    <li style="margin-right: 10px;">
-                        <a href="${item.link}" style="display: block; padding: 10px; background-color: ${menuItemBgColor}; color: ${menuTextColor}; text-decoration: none;">${item.text}</a>
-                    </li>
-                `;
-            });
-            
-            html += `
-                    </ul>
-                    </nav>
-                    
-                    <!-- Galeria -->
-                    <section style="background-color: ${galleryBgColor}; padding: 20px;">
-                        <h2>Galeria de Produtos</h2>
-                        <div style="display: grid; grid-template-columns: repeat(${galleryColumns}, 1fr); gap: 20px;">
-            `;
-            
-            // Adicionar cards da galeria
-            galleryItems.forEach(item => {
-                html += `
-                    <div style="background-color: ${item.backgroundColor}; padding: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                `;
-                
-                if (item.imageData) {
-                    html += `
-                        <div style="text-align: center; margin-bottom: 10px;">
-                            <img src="${item.imageData}" style="max-width: 100%; height: auto;" alt="${item.title}">
-                        </div>
-                    `;
-                }
-                
-                html += `
-                        <h3>${item.title}</h3>
-                        <p>${item.description}</p>
-                    </div>
-                `;
-            });
-            
-            html += `
-                        </div>
-                    </section>
-                    
-                    <!-- Formulário -->
-                    <section style="padding: 20px;">
-                        <form style="background-color: ${formBgColor}; padding: 20px; border: 1px solid ${formBorderColor}; border-radius: 5px;">
-                            <h2>${formTitle}</h2>
-            `;
-            
-            // Adicionar campos do formulário
-            formFields.forEach(field => {
-                html += `<div style="margin-bottom: 15px;">`;
-                
-                if (field.type === 'textarea') {
-                    html += `
-                        <label for="${field.id}" style="display: block; margin-bottom: 5px;">${field.label}${field.required ? ' *' : ''}</label>
-                        <textarea id="${field.id}" rows="4" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"${field.required ? ' required' : ''}></textarea>
-                    `;
-                } else if (field.type === 'select') {
-                    html += `
-                        <label for="${field.id}" style="display: block; margin-bottom: 5px;">${field.label}${field.required ? ' *' : ''}</label>
-                        <select id="${field.id}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"${field.required ? ' required' : ''}>
-                            <option value="">Selecione...</option>
-                    `;
-                    
-                    if (field.options) {
-                        const options = field.options.split('\n');
-                        options.forEach(option => {
-                            if (option.trim()) {
-                                html += `<option value="${option.trim()}">${option.trim()}</option>`;
-                            }
-                        });
-                    }
-                    
-                    html += `</select>`;
-                } else if (field.type === 'radio') {
-                    html += `<div style="margin-bottom: 5px;">${field.label}${field.required ? ' *' : ''}</div>`;
-                    
-                    if (field.options) {
-                        const options = field.options.split('\n');
-                        options.forEach((option, i) => {
-                            if (option.trim()) {
-                                html += `
-                                    <div style="margin: 5px 0;">
-                                        <input type="radio" id="${field.id}_${i}" name="${field.id}" value="${option.trim()}"${field.required ? ' required' : ''}>
-                                        <label for="${field.id}_${i}">${option.trim()}</label>
-                                    </div>
-                                `;
-                            }
-                        });
-                    }
-                } else {
-                    html += `
-                        <label for="${field.id}" style="display: block; margin-bottom: 5px;">${field.label}${field.required ? ' *' : ''}</label>
-                        <input type="${field.type}" id="${field.id}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"${field.required ? ' required' : ''}>
-                    `;
-                }
-                
-                html += `</div>`;
-            });
-            
-            html += `
-                            <button type="submit" style="padding: 10px 20px; background-color: ${menuBgColor}; color: ${menuTextColor}; border: none; border-radius: 4px; cursor: pointer;">Enviar</button>
-                        </form>
-                    </section>
-                    
-                    <!-- Rodapé -->
-                    <footer style="background-color: ${footerBgColor}; color: ${footerTextColor}; padding: 20px; text-align: center; font-size: ${footerFontSize}px;">
-                        ${footerText}
-                    </footer>
+            <!-- Painel do Cabeçalho -->
+            <div id="header-panel" class="panel active">
+                <h2>Editar Cabeçalho</h2>
+                <label>Cor de Fundo do Cabeçalho:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="headerBgColor" value="#f8f8f8" onchange="updateHeaderStyle()">
+                    <span id="headerBgColorValue">#f8f8f8</span>
                 </div>
-            `;
+                
+                <div id="header-elements">
+                    <!-- Elementos do cabeçalho serão adicionados aqui -->
+                </div>
+                
+                <button onclick="addHeaderElement()">Adicionar Elemento</button>
+            </div>
             
-            preview.innerHTML = html;
-        }
+            <!-- Painel do Menu -->
+            <div id="menu-panel" class="panel">
+                <h2>Editar Menu</h2>
+                <label>Cor de Fundo do Menu:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="menuBgColor" value="#333333" onchange="updateMenuStyle()">
+                    <span id="menuBgColorValue">#333333</span>
+                </div>
+                
+                <label>Cor do Texto do Menu:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="menuTextColor" value="#ffffff" onchange="updateMenuStyle()">
+                    <span id="menuTextColorValue">#ffffff</span>
+                </div>
+                
+                <label>Cor de Fundo dos Itens:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="menuItemBgColor" value="#444444" onchange="updateMenuStyle()">
+                    <span id="menuItemBgColorValue">#444444</span>
+                </div>
+                
+                <label>Adicionar Logo ao Menu:</label>
+                <input type="file" id="menuLogo" accept="image/*" onchange="handleMenuLogoUpload()">
+                <div id="menuLogoPreview" class="image-placeholder">Logo do Menu</div>
+                
+                <label>Tamanho do Logo:</label>
+                <div class="flex-container">
+                    <div>
+                        <label for="menuLogoWidth">Largura:</label>
+                        <input type="number" id="menuLogoWidth" value="50" min="20" max="200" onchange="updateMenuStyle()">
+                    </div>
+                    <div>
+                        <label for="menuLogoHeight">Altura:</label>
+                        <input type="number" id="menuLogoHeight" value="50" min="20" max="200" onchange="updateMenuStyle()">
+                    </div>
+                </div>
+                
+                <h3>Itens do Menu</h3>
+                <div id="menu-items">
+                    <!-- Itens do menu serão adicionados aqui -->
+                </div>
+                
+                <button onclick="addMenuItem()">Adicionar Item de Menu</button>
+            </div>
+            
+            <!-- Painel da Galeria -->
+            <div id="gallery-panel" class="panel">
+                <h2>Editar Galeria</h2>
+                <label>Cor de Fundo da Galeria:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="galleryBgColor" value="#f0f0f0" onchange="updateGalleryStyle()">
+                    <span id="galleryBgColorValue">#f0f0f0</span>
+                </div>
+                
+                <label>Colunas por Linha:</label>
+                <input type="number" id="galleryColumns" value="3" min="1" max="4" onchange="updateGalleryStyle()">
+                
+                <h3>Cards da Galeria</h3>
+                <div id="gallery-items">
+                    <!-- Cards da galeria serão adicionados aqui -->
+                </div>
+                
+                <button onclick="addGalleryItem()">Adicionar Card</button>
+            </div>
+            
+            <!-- Painel do Formulário -->
+            <div id="form-panel" class="panel">
+                <h2>Editar Formulário</h2>
+                <label>Título do Formulário:</label>
+                <input type="text" id="formTitle" value="Entre em Contato" onchange="updateFormStyle()">
+                
+                <label>Cor de Fundo do Formulário:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="formBgColor" value="#f8f8f8" onchange="updateFormStyle()">
+                    <span id="formBgColorValue">#f8f8f8</span>
+                </div>
+                
+                <label>Cor da Borda do Formulário:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="formBorderColor" value="#dddddd" onchange="updateFormStyle()">
+                    <span id="formBorderColorValue">#dddddd</span>
+                </div>
+                
+                <h3>Campos do Formulário</h3>
+                <div id="form-fields">
+                    <!-- Campos do formulário serão adicionados aqui -->
+                </div>
+                
+                <button onclick="addFormField()">Adicionar Campo</button>
+            </div>
+            
+            <!-- Painel do Rodapé -->
+            <div id="footer-panel" class="panel">
+                <h2>Editar Rodapé</h2>
+                <label>Cor de Fundo do Rodapé:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="footerBgColor" value="#333333" onchange="updateFooterStyle()">
+                    <span id="footerBgColorValue">#333333</span>
+                </div>
+                
+                <label>Cor do Texto do Rodapé:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="footerTextColor" value="#ffffff" onchange="updateFooterStyle()">
+                    <span id="footerTextColorValue">#ffffff</span>
+                </div>
+                
+                <label>Texto do Rodapé:</label>
+                <textarea id="footerText" rows="3" onchange="updateFooterStyle()">© 2025 Minha Empresa. Todos os direitos reservados.</textarea>
+                
+                <label>Tamanho da Fonte:</label>
+                <input type="number" id="footerFontSize" value="14" min="10" max="24" onchange="updateFooterStyle()">
+            </div>
+            
+            <!-- Painel de Configurações Gerais -->
+            <div id="general-panel" class="panel">
+                <h2>Configurações Gerais</h2>
+                <label>Cor de Fundo da Página:</label>
+                <div class="color-picker-container">
+                    <input type="color" id="pageBgColor" value="#ffffff" onchange="updateGeneralStyle()">
+                    <span id="pageBgColorValue">#ffffff</span>
+                </div>
+                
+                <label>Fonte da Página:</label>
+                <select id="pageFont" onchange="updateGeneralStyle()">
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Times New Roman', serif">Times New Roman</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="Georgia, serif">Georgia</option>
+                    <option value="Verdana, sans-serif">Verdana</option>
+                </select>
+                
+                <div class="button-group">
+                    <button onclick="showGeneratedCode()">Mostrar Código HTML</button>
+                    <button onclick="saveToLocalStorage()">Salvar no LocalStorage</button>
+                    <button onclick="loadFromLocalStorage()">Carregar do LocalStorage</button>
+                    <button onclick="clearLocalStorage()" class="remove-btn">Limpar LocalStorage</button>
+                </div>
+                
+                <h3>Código HTML Gerado</h3>
+                <textarea id="generatedCode" readonly></textarea>
+            </div>
+        </div>
         
-        // Funções para manipular o código HTML
-        function showGeneratedCode() {
-            const preview = document.getElementById('preview');
-            const generatedCode = document.getElementById('generatedCode');
-            
-            const htmlContent = preview.innerHTML;
-            const fullHtml = `<!DOCTYPE html>
-        <html lang="pt-br">
-        <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Página Gerada</title>
-        </head>
-        <body>
-        ${htmlContent}
-        </body>
-        </html>`;
-            
-            generatedCode.value = fullHtml;
-        }
-        
-        function saveToLocalStorage() {
-            const preview = document.getElementById('preview');
-            const htmlContent = preview.innerHTML;
-            
-            const fullHtml = `<!DOCTYPE html>
-        <html lang="pt-br">
-        <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Página Gerada</title>
-        </head>
-        <body>
-        ${htmlContent}
-        </body>
-        </html>`;
-            
-            localStorage.setItem('generatedHtml', fullHtml);
-            
-            // Salvar também os dados do estado atual
-            const editorState = {
-                headerElements: headerElements,
-                menuItems: menuItems,
-                galleryItems: galleryItems,
-                formFields: formFields,
-                headerBgColor: document.getElementById('headerBgColor').value,
-                menuBgColor: document.getElementById('menuBgColor').value,
-                menuTextColor: document.getElementById('menuTextColor').value,
-                menuItemBgColor: document.getElementById('menuItemBgColor').value,
-                galleryBgColor: document.getElementById('galleryBgColor').value,
-                galleryColumns: document.getElementById('galleryColumns').value,
-                formTitle: document.getElementById('formTitle').value,
-                formBgColor: document.getElementById('formBgColor').value,
-                formBorderColor: document.getElementById('formBorderColor').value,
-                footerBgColor: document.getElementById('footerBgColor').value,
-                footerTextColor: document.getElementById('footerTextColor').value,
-                footerText: document.getElementById('footerText').value,
-                footerFontSize: document.getElementById('footerFontSize').value,
-                pageBgColor: document.getElementById('pageBgColor').value,
-                pageFont: document.getElementById('pageFont').value
-            };
-            
-            localStorage.setItem('editorState', JSON.stringify(editorState));
-            
-            alert('Código HTML salvo no LocalStorage com sucesso!');
-        }
-        
-        function loadFromLocalStorage() {
-            const generatedHtml = localStorage.getItem('generatedHtml');
-            const editorState = localStorage.getItem('editorState');
-            
-            if (generatedHtml) {
-                document.getElementById('generatedCode').value = generatedHtml;
-            }
-            
-            if (editorState) {
-                const state = JSON.parse(editorState);
-                
-                // Restaurar o estado do editor
-                headerElements = state.headerElements;
-                menuItems = state.menuItems;
-                galleryItems = state.galleryItems;
-                formFields = state.formFields;
-                
-                document.getElementById('headerBgColor').value = state.headerBgColor;
-                document.getElementById('headerBgColorValue').textContent = state.headerBgColor;
-                
-                document.getElementById('menuBgColor').value = state.menuBgColor;
-                document.getElementById('menuBgColorValue').textContent = state.menuBgColor;
-                
-                document.getElementById('menuTextColor').value = state.menuTextColor;
-                document.getElementById('menuTextColorValue').textContent = state.menuTextColor;
-                
-                document.getElementById('menuItemBgColor').value = state.menuItemBgColor;
-                document.getElementById('menuItemBgColorValue').textContent = state.menuItemBgColor;
-                
-                document.getElementById('galleryBgColor').value = state.galleryBgColor;
-                document.getElementById('galleryBgColorValue').textContent = state.galleryBgColor;
-                
-                document.getElementById('galleryColumns').value = state.galleryColumns;
-                
-                document.getElementById('formTitle').value = state.formTitle;
-                
-                document.getElementById('formBgColor').value = state.formBgColor;
-                document.getElementById('formBgColorValue').textContent = state.formBgColor;
-                
-                document.getElementById('formBorderColor').value = state.formBorderColor;
-                document.getElementById('formBorderColorValue').textContent = state.formBorderColor;
-                
-                document.getElementById('footerBgColor').value = state.footerBgColor;
-                document.getElementById('footerBgColorValue').textContent = state.footerBgColor;
-                
-                document.getElementById('footerTextColor').value = state.footerTextColor;
-                document.getElementById('footerTextColorValue').textContent = state.footerTextColor;
-                
-                document.getElementById('footerText').value = state.footerText;
-                document.getElementById('footerFontSize').value = state.footerFontSize;
-                
-                document.getElementById('pageBgColor').value = state.pageBgColor;
-                document.getElementById('pageBgColorValue').textContent = state.pageBgColor;
-                
-                document.getElementById('pageFont').value = state.pageFont;
-                
-                // Renderizar os elementos
-                renderHeaderElements();
-                renderMenuItems();
-                renderGalleryItems();
-                renderFormFields();
-                
-                // Atualizar a visualização
-                updatePreview();
-                
-                alert('Dados carregados do LocalStorage com sucesso!');
-            } else {
-                alert('Nenhum dado encontrado no LocalStorage.');
-            }
-        }
-        
-        function clearLocalStorage() {
-            localStorage.removeItem('generatedHtml');
-            localStorage.removeItem('editorState');
-            localStorage.removeItem('menuLogo');
-            alert('LocalStorage limpo com sucesso!');
-        }
-        
-        // Inicializar o editor quando a página carregar
-        window.onload = function() {
-            initEditor();
-        };
+        <div class="preview-container">
+            <h2>Visualização da Página</h2>
+            <div id="preview"></div>
+        </div>
+    </div>
+    
+    <script src="./javascript/javascript.js"></script>
+</body>
+</html>
